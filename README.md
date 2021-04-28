@@ -11,7 +11,7 @@ Integrantes:
 <br>
 
 
-# **Sistema de gestion de premios por fidelidad**
+# **Sistema de gestión de premios por fidelidad**
 Requerimientos: 
 - El usuario deberá autenticar su identidad para ingresar al sistema.
 - El usuario podrá seleccionar de un listado de productos uno, o más, que desee canjear por un monto de puntos.
@@ -20,38 +20,42 @@ Requerimientos:
 
 <br>
 
-
-# Modelo de Datos
-[img1]: documents/datamodel.png
-
-# Diagrama de Clases
-[img1]: documents/diagramclass.png
-
-# Esquema GraphQL
-[img1]: documents/schema.png 
-
 # Tecnologías
-
-### **NodeJs** 
-_[ entorno JavaScript ]_
-<br>
-
-Lo utilizamos por su facilidad a la hora de crear nuevos endpoints, sentimos que no necesitamos una herramienta mucho más poderosa que node para lograr los endpoints
-que estamos necesitando. Firebase se va a encargar de hacer todo el trabajo pesado a la hora de traer la información.
-
-<br>
-
-### **GraphQL** 
-_[ interfaz ]_
-<br>
-
-se requieren pocas entidades por lo q no es tan tedioso la configuracion de esquema de datos en graphQL 
-
-<br>
 
 ### **Firebase** 
 _[ base de datos ]_
 <br>
 
-Utilizamos firebase porque tiene una facilidad a la hora de autenticar usuarios si bien vamos a tener que luego unir la información de la sesión con alguna tabla
-los métodos que usa son simples y suficientes para este proyecto. Además al hacer uso de documentos como su método de base de datos nos facilita a la hora de crear sistemas de historial como es el caso de "historial de canjes".
+Esta plataforma cloud gratuita nos brinda diferentes servicios que agilizan y simplifican tareas escenciales a la hora de desarrollar nuestro sistema. Haremos uso de los servicios
+- **Auth** ya que permite la autenticación de un usuario y permanencia de sesión de una forma sencilla
+- **Realtime Database** nos brinda una base de datos no relacional con una interfaz gráfica muy intuitiva para los usuarios y fácil a la hora de crear nuestro modelo de datos que además envía notificaciones a las aplicaciones cuando los datos cambian lo que nos permite tener una consistencia de datos constante en nuestro servicio especialmente en casos donde se necesita conocer la disponibilidad de un producto a la hora de realizar el canje
+- **Cloud Functions** herrmienta que nos permitirá conectar con la interfaz GraphQL y levantar los datos requeridos. 
+
+<br>
+
+### **GraphQL** 
+_[ lenguaje de consulta ]_
+<br>
+
+La utilización de esta interfaz para la consulta y manipulación de datos nos agilizará los tiempos de respuesta al cliente ya que es una única consulta la que realiza. Al recibir la información específica de lo que necesita mostrar al usuario también tendrá impacto en la resolución front-end.
+
+<br>
+
+### **NodeJs** 
+_[ entorno JavaScript ]_
+<br>
+
+Para poder utilizar GraphQL el proyecto estará levantado sobre un entorno de ejecución del lado servidor en Javascript. Para ello seleccionamos Node.js ya que es uno de los más populares y open-source, además de incluir npm, el gestor de paquetes que nos permite incluir modulos facilmente en nuestro proyecto, agilizando el desarrollo del sistema ampliamente. 
+
+<br>
+
+# Modelo de Datos
+![modelo_datos](./documents/)
+
+# Esquema GraphQL
+![esquema_graphql](./documents/)
+
+# Diagrama de Clases
+![diagrama_clases](./documents/)
+
+
