@@ -13,9 +13,10 @@ Integrantes:
 
 # **Sistema de gestion de premios por fidelidad**
 Requerimientos: 
-- El usuario podrá seleccionar de un listado de productos uno o más que desee canjear por un monto de puntos
-- El sistema validará los puntos acumulados por el cliente si son suficientes para realizar el canje deseado 
-- El administrador podrá realizar la creacion, edicion y eliminacion de los productos. 
+- El usuario deberá autenticar su identidad para ingresar al sistema.
+- El usuario podrá seleccionar de un listado de productos uno, o más, que desee canjear por un monto de puntos.
+- El sistema validará si los puntos acumulados por el usuario son suficientes para realizar el canje deseado.
+- El usuario administrador podrá crear, editar y eliminar productos del sistema. 
 
 <br>
 
