@@ -5,8 +5,8 @@ Trabajo práctico para la materia `Programación con objetos avanzada` de la Fac
 <br>
 
 Integrantes: 
-- Tomas Winiki
 - Natalia Bellosi
+- Tomas Winiki
 
 <br>
 
@@ -50,12 +50,16 @@ Para poder utilizar GraphQL el proyecto estará levantado sobre un entorno de ej
 <br>
 
 # Modelo de Datos
-![modelo_datos](./documents/)
+![modelo_datos](./documents/Modelo_datos.png)
+
+<br>
 
 # Esquema GraphQL
-![esquema_graphql](./documents/)
+![esquema_graphql](./documents/Esquema_GraphQL.png)
+
+<br>
 
 # Diagrama de Clases
-![diagrama_clases](./documents/)
+![diagrama_clases](./documents/Diagrama_clases.png)
 
 
