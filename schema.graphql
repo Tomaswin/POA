@@ -1,0 +1,38 @@
+type Book{
+	
+	id: ID!
+	title: String!
+	editorial: String!
+	autor: Author!
+	category: Category!
+	price: Float!
+}
+
+type Author{
+	
+	id: ID!
+	pseudonimo: String!
+	books: [Book!]!
+}
+
+type Category{
+	
+	id: ID!
+	description: String!
+	books: [Book!]!
+}
+
+type Query{
+	
+	booksByCategory(categoryID:ID!):[Book!]!
+	categories: [Category!]!
+	booksByAuthor(authorID:ID!):[Book!]!
+	authors: [Author!]!
+}
+
+type Mutation{
+	
+	createCategory(description:String!): Category
+	createAuthor(pseudonimo:String!): Author
+	createBook(title:String!,editorial:String!,author:ID!,category:ID!,price:Float!): Book
+}

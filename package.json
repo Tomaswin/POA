@@ -1,0 +1,25 @@
+{
+  "name": "poa",
+  "version": "1.0.0",
+  "description": "Trabajo práctico para la materia `Programación con objetos avanzada` de la Facultad de Ingeniería de la Universidad de Palermo. _[ Primer cuatrimestre - 2021 ]_",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tomaswin/POA.git"
+  },
+  "keywords": [],
+  "author": "Tomas Winicki y Natalia Bellosi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Tomaswin/POA/issues"
+  },
+  "homepage": "https://github.com/Tomaswin/POA#readme",
+  "dependencies": {
+    "firebase-admin": "^9.8.0",
+    "firebase-functions": "^3.14.1",
+    "graphql-yoga": "^1.18.3"
+  }
+}
