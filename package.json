@@ -2,7 +2,7 @@
   "name": "poa",
   "version": "1.0.0",
   "description": "Trabajo práctico para la materia `Programación con objetos avanzada` de la Facultad de Ingeniería de la Universidad de Palermo. _[ Primer cuatrimestre - 2021 ]_",
-  "main": "app.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -18,8 +18,9 @@
   },
   "homepage": "https://github.com/Tomaswin/POA#readme",
   "dependencies": {
+    "apollo-server": "^2.24.1",
     "firebase-admin": "^9.8.0",
     "firebase-functions": "^3.14.1",
-    "graphql-yoga": "^1.18.3"
+    "graphql": "^15.5.0"
   }
 }

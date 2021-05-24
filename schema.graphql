@@ -26,6 +26,7 @@ type Query{
 	
 	booksByCategory(categoryID:ID!):[Book!]!
 	categories: [Category!]!
+    user(name: String): String!
 	booksByAuthor(authorID:ID!):[Book!]!
 	authors: [Author!]!
 }
