@@ -1,27 +1,20 @@
-const { ApolloServer, gql } = require('apollo-server');
+const { readFileSync } = require('fs')
+const typeDefs = readFileSync('./schema.graphql').toString('utf-8')
+
+const { ApolloServer } = require('apollo-server');
+
 const admin = require("firebase-admin")
 const FbFunctions = require("firebase-functions");
 const { UserDimensions } = require('firebase-functions/lib/providers/analytics');
-const firebaseConfig = require("../POA/firebaseConfig.json")
+const firebaseConfig = require('./firebaseConfig.json')
 
 admin.initializeApp({
     credential: admin.credential.cert(firebaseConfig)
 });
 
-//TODO replace typeDefs with schema.graphql with require, reminder dont change the name
-const typeDefs = gql`
-type User {
-  name: String
-}
-
-type Query {
-  books: [User]
-}
-`;
-
 const resolvers = {
     Query: {
-        books: async () => {
+        users: async () => {
             let users = [];
             try {
                 await admin.firestore().collection("users").get().then(function (querySnapchshot) {
@@ -40,7 +33,31 @@ const resolvers = {
 
 const server = new ApolloServer({ typeDefs, resolvers });
 
-// The `listen` method launches a web server.
 server.listen().then(({ url }) => {
     console.log(`🚀  Server ready at ${url}`);
 });
+
+
+// TYPE DATE = SCALAR 
+/* 
+// resolver for DATE
+// https://stackoverflow.com/questions/49693928/date-and-json-in-type-definition-for-graphql 
+const resolverMap = {
+    Date: new GraphQLScalarType({
+      name: 'Date',
+      description: 'Date custom scalar type',
+      parseValue(value) {
+        return new Date(value); // value from the client
+      },
+      serialize(value) {
+        return value.getTime(); // value sent to the client
+      },
+      parseLiteral(ast) {
+        if (ast.kind === Kind.INT) {
+          return parseInt(ast.value, 10); // ast value is always in string format
+        }
+        return null;
+      },
+    })
+} 
+*/
