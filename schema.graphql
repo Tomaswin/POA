@@ -41,6 +41,6 @@ type Query{
 
 type Mutation{
 
-	createUser(name: String, lastName: String, email: String!, password: String!, points: Int!): User	
+	createUser(name: String, lastName: String, email: String!, password: String!, points: Int!): String	
 }
 
