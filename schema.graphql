@@ -6,8 +6,7 @@ type User {
 	email: String!
 	password: String!
 	points: Int!
-	exHistory: ExchangeHistory
-	exchanges: [Exchange]
+	exchangesHistory: [Exchange]
 }
 
 type Product {
@@ -22,25 +21,25 @@ scalar Date
 
 type Exchange {
 
-	user: User!
-	productList: [Product!]!
-	date: Date!
-	totalPoints: Int!
-}
-
-type ExchangeHistory {
-
-	user: User!
-	exchangeList: [Exchange]
+	user: String
+	productList: [Product!]
+	date: Date
+	totalPoints: Int
 }
 
 type Query{
-	
-	users: [User]
+	product: [Product]
+	exchange: [Exchange]
+	exchangeByUser(token: String!): [Exchange]
+	user(token: String!): User
 }
 
 type Mutation{
-
+	deleteProduct(productId: ID!): Boolean
+	updateProduct(productId: ID!, name: String!, description: String, availability: Boolean!): Boolean
+	createProduct(name: String!, description: String, availability: Boolean!): ID!
+	exchangePoints(token: String!, products: [ID!]): String
+	login(email: String!, password: String!): String
 	createUser(name: String, lastName: String, email: String!, password: String!, points: Int!): String	
 }
 

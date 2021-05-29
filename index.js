@@ -1,11 +1,7 @@
 const { readFileSync } = require('fs')
 const typeDefs = readFileSync('./schema.graphql').toString('utf-8')
-
-const { ApolloServer } = require('apollo-server');
-
-const admin = require("firebase-admin")
-const FbFunctions = require("firebase-functions");
-const { UserDimensions } = require('firebase-functions/lib/providers/analytics');
+const admin = require('firebase-admin')
+const { ApolloServer, ApolloError } = require('apollo-server');
 const firebaseConfig = require('./firebaseConfig.json');
 
 admin.initializeApp({
@@ -14,18 +10,14 @@ admin.initializeApp({
 
 const resolvers = {
   Query: {
-    users: async () => {
-      let users = [];
+    async user(_, args) {
       try {
-        await admin.firestore().collection("users").get().then(function (querySnapchshot) {
-          querySnapchshot.forEach(function (doc) {
-            users.push(doc.data());
-          });
-        })
+        const user = await getUserById(args.token)
+        const userExchange = await getExchangeByUser(args.token)
+        return { ...user, "exchangesHistory": userExchange }
       } catch (error) {
-        console.log(error)
+        throw new ApolloError(error)
       }
-      return users
     },
   },
 
@@ -38,6 +30,7 @@ const resolvers = {
         lastName: args.lastName,
         points: args.points
       }
+      console.log(data)
       admin.auth().createUser({
         email: data.email,
         password: data.password,
@@ -50,6 +43,33 @@ const resolvers = {
     },
   }
 };
+
+async function getProductListByExchange(productExchangeList) {
+  const productList = []
+  console.log(productExchangeList)
+  for (let index = 0; index < productExchangeList.length; index++) {
+    const productInfo = await admin.firestore().collection("product").doc(productExchangeList[index]).get()
+    productList.push(productInfo.data())
+  }
+  return productList
+}
+
+async function getUserById(userId) {
+  const usersDoc = await admin.firestore().collection("users").doc(userId).get();
+  return usersDoc.data()
+}
+
+async function getExchangeByUser(userId) {
+  const exchangeList = []
+  const res = await admin.firestore().collection("exchange").where("user", "==", userId).get()
+  for (let index = 0; index < res.docs.length; index++) {
+    const exchangeData = res.docs[index].data()
+
+    const productList = await getProductListByExchange(exchangeData.productList)
+    exchangeList.push({ "name": exchangeData.name, "totalPoints": exchangeData.totalPoints, "productList": productList, "date": exchangeData.date })
+  }
+  return exchangeList
+}
 
 async function setUser(data, uid) {
   const res = await admin.firestore().collection("users").doc(uid).set(data)
