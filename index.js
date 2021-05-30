@@ -19,6 +19,30 @@ const resolvers = {
         throw new ApolloError(error)
       }
     },
+    async product(_, args) {
+      try {
+        const products = await getAllData("product")
+        return { products }
+      } catch (error) {
+        throw new ApolloError(error)
+      }
+    },
+    async exchange(_, args) {
+      try {
+        const exchange = await getAllData("exchange")
+        return { exchange }
+      } catch (error) {
+        throw new ApolloError(error)
+      }
+    },
+    async exchangeByUser(_, args) {
+      try {
+        const exchange = await getExchangeByUser(args.token)
+        return { exchange }
+      } catch (error) {
+        throw new ApolloError(error)
+      }
+    }
   },
 
   Mutation: {
@@ -44,14 +68,29 @@ const resolvers = {
   }
 };
 
+async function getAllData(collection) {
+  const listData = []
+  const res = await admin.firestore().collection(collection).get()
+  res.docs.forEach(item => {
+    listData.push([item.data()])
+  });
+
+  return productList
+}
+
 async function getProductListByExchange(productExchangeList) {
   const productList = []
   console.log(productExchangeList)
   for (let index = 0; index < productExchangeList.length; index++) {
-    const productInfo = await admin.firestore().collection("product").doc(productExchangeList[index]).get()
+    const productInfo = await getProductById(productExchangeList[index])
     productList.push(productInfo.data())
   }
   return productList
+}
+
+async function getProductById(productId) {
+  const productInfo = await admin.firestore().collection("product").doc(productId).get()
+  return productInfo
 }
 
 async function getUserById(userId) {
