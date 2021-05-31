@@ -65,6 +65,22 @@ const resolvers = {
         return "Ya existe un usuario con este correo"
       })
     },
+    async createProduct(_, args) {
+      const data = {
+        name: args.name,
+        description: args.description,
+        availability: args.availability,
+        totalPoints: args.totalPoints,
+        date: Date.now()
+      }
+
+      try {
+        const res = await admin.firestore().collection("product").add(data)
+        return res.id
+      } catch (error) {
+        throw new ApolloError(error)
+      }
+    },
   }
 };
 
