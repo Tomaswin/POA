@@ -46,7 +46,7 @@ const resolvers = {
   },
 
   Mutation: {
-    createUser: async (parent, args) => {
+    async createUser(parent, args) {
       const data = {
         email: args.email,
         password: args.password,
@@ -60,9 +60,9 @@ const resolvers = {
         password: data.password,
       }).then((userCredential) => {
         setUser(data, userCredential.uid)
-        return "Usuario creado correctamente"
+        return res.id //Validar si esto es lo que queremos devolver
       }).catch((error) => {
-        return "Ya existe un usuario con este correo"
+        throw new ApolloError(error)
       })
     },
     async createProduct(_, args) {
