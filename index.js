@@ -1,8 +1,9 @@
 const { readFileSync } = require('fs')
-const typeDefs = readFileSync('./schema.graphql').toString('utf-8')
-const admin = require('firebase-admin')
 const { ApolloServer, ApolloError } = require('apollo-server');
+const admin = require('firebase-admin')
 const firebaseConfig = require('./firebaseConfig.json');
+
+const typeDefs = readFileSync('./schema.graphql').toString('utf-8')
 
 admin.initializeApp({
   credential: admin.credential.cert(firebaseConfig)
@@ -10,35 +11,48 @@ admin.initializeApp({
 
 const resolvers = {
   Query: {
+    // req for specific User 
     async user(_, args) {
       try {
-        const user = await getUserById(args.token)
+        // const user = await getUserById(args.token)
+        const user = await getUserById(args.id)
         const userExchange = await getExchangeByUser(args.token)
         return { ...user, "exchangesHistory": userExchange }
       } catch (error) {
         throw new ApolloError(error)
       }
     },
+    // req for all Products
     async product(_, args) {
       try {
         const products = await getAllData("product")
-        return { products }
+        console.log(products)
+        return products;
       } catch (error) {
         throw new ApolloError(error)
       }
     },
+    // req for all Exchanges
     async exchange(_, args) {
       try {
-        const exchange = await getAllData("exchange")
+        const exchange = await getAllData("exchange");
         return { exchange }
+
+        // const products = [];
+        // exchange.forEach((ex) =>{
+        //   const prod = await getProductListByExchange(exchange.id);
+        //   products.push(prod);
+        // } );
+        // return {...exchange, products};
       } catch (error) {
         throw new ApolloError(error)
       }
     },
+    // req for Exchanges from an specific User 
     async exchangeByUser(_, args) {
       try {
-        const exchange = await getExchangeByUser(args.token)
-        return { exchange }
+        const exchange = await getExchangeByUser(args.token);
+        return exchange;
       } catch (error) {
         throw new ApolloError(error)
       }
@@ -46,6 +60,7 @@ const resolvers = {
   },
 
   Mutation: {
+    // ABM Users
     async createUser(parent, args) {
       const data = {
         email: args.email,
@@ -65,6 +80,7 @@ const resolvers = {
         throw new ApolloError(error)
       })
     },
+    // ABM Products
     async createProduct(_, args) {
       const data = {
         name: args.name,
@@ -84,19 +100,21 @@ const resolvers = {
   }
 };
 
+// db requests
 async function getAllData(collection) {
   const listData = []
   const res = await admin.firestore().collection(collection).get()
   res.docs.forEach(item => {
-    listData.push([item.data()])
+    listData.push(item.data())
   });
 
-  return productList
+  return listData
+  // return productList
 }
 
 async function getProductListByExchange(productExchangeList) {
   const productList = []
-  console.log(productExchangeList)
+  console.log('productExchangeList',productExchangeList)
   for (let index = 0; index < productExchangeList.length; index++) {
     const productInfo = await getProductById(productExchangeList[index])
     productList.push(productInfo.data())
@@ -131,6 +149,8 @@ async function setUser(data, uid) {
   return res
 }
 
+
+// SERVER 
 const server = new ApolloServer({ typeDefs, resolvers });
 
 server.listen().then(({ url }) => {
