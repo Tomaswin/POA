@@ -38,10 +38,10 @@ type Query{
 
 type Mutation{
 	deleteProduct(productId: ID!): Boolean
-	updateProduct(productId: ID!, name: String!, description: String, availability: Boolean!,totalPoints: Int!): Boolean
+	updateProduct(productId: ID!, name: String, description: String, availability: Boolean, totalPoints: Int): Boolean
 	createProduct(name: String!, description: String, availability: Boolean!,totalPoints: Int!): ID!
 	exchangePoints(token: String!, products: [ID!]): String
 	login(email: String!, password: String!): Boolean
-	createUser(name: String, lastName: String, email: String!, password: String!, points: Int!): String	
+	createUser(name: String, lastName: String, email: String!, password: String!, points: Int!): String
 }
 

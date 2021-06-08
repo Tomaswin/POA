@@ -16,7 +16,7 @@ const resolvers = {
       try {
         // const user = await getUserById(args.token)
         const user = await getUserById(args.id)
-        const userExchange = await getExchangeByUser(args.token)
+        const userExchange = await getExchangeByUser(args.id)
         return { ...user, "exchangesHistory": userExchange }
       } catch (error) {
         throw new ApolloError(error)
@@ -26,14 +26,13 @@ const resolvers = {
     async product(_, args) {
       try {
         const products = await getAllData("product")
-        console.log(products)
         return products;
       } catch (error) {
         throw new ApolloError(error)
       }
     },
 
-// NO LO PIDE
+    // NO LO PIDE
     // req for all Exchanges
     async exchange(_, args) {
       try {
@@ -69,7 +68,6 @@ const resolvers = {
         description: args.description,
         availability: args.availability,
         totalPoints: args.totalPoints,
-        date: Date.now()
       }
 
       try {
@@ -80,54 +78,67 @@ const resolvers = {
       }
     },
     async updateProduct(_, args) {
-      const data = {
-        name: args.name,
-        description: args.description,
-        availability: args.availability,
-        totalPoints: args.totalPoints,
-        date: Date.now()
-      }
       try {
-        const res = await admin.firestore().collection("product").add(data)
-        return res.id
+        await admin.firestore().collection("product").doc(args.productId).update({
+          name: args.name,
+          description: args.description,
+          availability: args.availability,
+          totalPoints: args.totalPoints,
+        })
+        return true
       } catch (error) {
-        throw new ApolloError(error)
+        return false
+      }
+    },
+    async deleteProduct(_, args) {
+      try {
+        await admin.firestore().collection("product").doc(args.productId).delete()
+        return true
+      } catch (error) {
+        return false
       }
     },
     async login(_, args) {
       admin.auth().setPersistence(admin.auth.Auth.Persistence.NONE)
         .then(() => {
-          admin.auth().signInWithEmailAndPassword(args.email, args.password);
-          return admin.auth().curentUser != null
-        })
-        .catch((error) => {
+          console.log("entre")
+          if (admin.auth().currentUser == null) {
+            console.log("entre x 2")
+            admin.auth().signInWithEmailAndPassword(args.email, args.password);
+            return false
+          } else {
+            console.log("entre x 3")
+            return true
+          }
+        }).catch((error) => {
           var errorCode = error.code;
           var errorMessage = error.message;
           console.log(errorMessage)
           return false
         });
-      }
-    },
-    // ABM Users
-    async createUser(parent, args) {
-      const data = {
-        email: args.email,
-        password: args.password,
-        name: args.name,
-        lastName: args.lastName,
-        points: args.points
-      }
-      console.log(data)
-      admin.auth().createUser({
-        email: data.email,
-        password: data.password,
-      }).then((userCredential) => {
-        setUser(data, userCredential.uid)
-        return res.id //Validar si esto es lo que queremos devolver
-      }).catch((error) => {
-        throw new ApolloError(error)
-      })
     }
+  },
+  // ABM Users
+  /*
+  async createUser(parent, args) {
+    const data = {
+      email: args.email,
+      password: args.password,
+      name: args.name,
+      lastName: args.lastName,
+      points: args.points
+    }
+    console.log(data)
+    admin.auth().createUser({
+      email: data.email,
+      password: data.password,
+    }).then((userCredential) => {
+      setUser(data, userCredential.uid)
+      return res.id //Validar si esto es lo que queremos devolver
+    }).catch((error) => {
+      throw new ApolloError(error)
+    })
+  }*/
 };
 
 // db requests
