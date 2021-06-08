@@ -15,12 +15,14 @@ type Product {
 	name: String!
 	description: String
 	availability: Boolean!
+	totalPoints: Int!
 }
 
 scalar Date
 
 type Exchange {
 
+	exchangeId: ID!
 	user: String
 	productList: [Product!]
 	date: Date
@@ -28,16 +30,16 @@ type Exchange {
 }
 
 type Query{
+	user(token: String!): User
 	product: [Product]
 	exchange: [Exchange]
 	exchangeByUser(token: String!): [Exchange]
-	user(token: String!): User
 }
 
 type Mutation{
 	deleteProduct(productId: ID!): Boolean
-	updateProduct(productId: ID!, name: String!, description: String, availability: Boolean!): Boolean
-	createProduct(name: String!, description: String, availability: Boolean!): ID!
+	updateProduct(productId: ID!, name: String!, description: String, availability: Boolean!,totalPoints: Int!): Boolean
+	createProduct(name: String!, description: String, availability: Boolean!,totalPoints: Int!): ID!
 	exchangePoints(token: String!, products: [ID!]): String
 	login(email: String!, password: String!): Boolean
 	createUser(name: String, lastName: String, email: String!, password: String!, points: Int!): String	

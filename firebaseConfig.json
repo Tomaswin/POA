@@ -1,5 +1,11 @@
 {
     "apiKey": "AIzaSyAKh2buSMnITlHy1Vx6SZc5UBXxhxTjnO0",
+    "authDomain": "poap-812a4.firebaseapp.com",
+    "databaseURL": "https://poap-812a4-default-rtdb.firebaseio.com",
+    "projectId": "poap-812a4",
+    "storageBucket": "poap-812a4.appspot.com",
+    "messagingSenderId": "424341626179",
+    "appId": "1:424341626179:web:52dc211246e3cb8ed0e3f6",
     "type": "service_account",
     "project_id": "poap-812a4",
     "private_key_id": "d0cc56d460f3a5c12672e52cfc1cdf715400d8c5",

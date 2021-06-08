@@ -32,6 +32,8 @@ const resolvers = {
         throw new ApolloError(error)
       }
     },
+
+// NO LO PIDE
     // req for all Exchanges
     async exchange(_, args) {
       try {
@@ -60,26 +62,6 @@ const resolvers = {
   },
 
   Mutation: {
-    // ABM Users
-    async createUser(parent, args) {
-      const data = {
-        email: args.email,
-        password: args.password,
-        name: args.name,
-        lastName: args.lastName,
-        points: args.points
-      }
-      console.log(data)
-      admin.auth().createUser({
-        email: data.email,
-        password: data.password,
-      }).then((userCredential) => {
-        setUser(data, userCredential.uid)
-        return res.id //Validar si esto es lo que queremos devolver
-      }).catch((error) => {
-        throw new ApolloError(error)
-      })
-    },
     // ABM Products
     async createProduct(_, args) {
       const data = {
@@ -90,6 +72,21 @@ const resolvers = {
         date: Date.now()
       }
 
+      try {
+        const res = await admin.firestore().collection("product").add(data)
+        return res.id
+      } catch (error) {
+        throw new ApolloError(error)
+      }
+    },
+    async updateProduct(_, args) {
+      const data = {
+        name: args.name,
+        description: args.description,
+        availability: args.availability,
+        totalPoints: args.totalPoints,
+        date: Date.now()
+      }
       try {
         const res = await admin.firestore().collection("product").add(data)
         return res.id
@@ -109,8 +106,28 @@ const resolvers = {
           console.log(errorMessage)
           return false
         });
+      }
+    },
+    // ABM Users
+    async createUser(parent, args) {
+      const data = {
+        email: args.email,
+        password: args.password,
+        name: args.name,
+        lastName: args.lastName,
+        points: args.points
+      }
+      console.log(data)
+      admin.auth().createUser({
+        email: data.email,
+        password: data.password,
+      }).then((userCredential) => {
+        setUser(data, userCredential.uid)
+        return res.id //Validar si esto es lo que queremos devolver
+      }).catch((error) => {
+        throw new ApolloError(error)
+      })
     }
-  }
 };
 
 // db requests
