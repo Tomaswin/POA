@@ -1,13 +1,13 @@
 const { readFileSync } = require('fs')
-const { ApolloServer, ApolloError } = require('apollo-server');
-const admin = require('firebase-admin')
+const { ApolloServer, ApolloError, addErrorLoggingToSchema } = require('apollo-server');
+const admin = require('firebase/app')
+require("firebase/auth");
+require("firebase/firestore");
 const firebaseConfig = require('./firebaseConfig.json');
 
 const typeDefs = readFileSync('./schema.graphql').toString('utf-8')
 
-admin.initializeApp({
-  credential: admin.credential.cert(firebaseConfig)
-});
+admin.initializeApp(firebaseConfig)
 
 const resolvers = {
   Query: {
@@ -97,6 +97,19 @@ const resolvers = {
         throw new ApolloError(error)
       }
     },
+    async login(_, args) {
+      admin.auth().setPersistence(admin.auth.Auth.Persistence.NONE)
+        .then(() => {
+          admin.auth().signInWithEmailAndPassword(args.email, args.password);
+          return admin.auth().curentUser != null
+        })
+        .catch((error) => {
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          console.log(errorMessage)
+          return false
+        });
+    }
   }
 };
 
@@ -114,7 +127,7 @@ async function getAllData(collection) {
 
 async function getProductListByExchange(productExchangeList) {
   const productList = []
-  console.log('productExchangeList',productExchangeList)
+  console.log('productExchangeList', productExchangeList)
   for (let index = 0; index < productExchangeList.length; index++) {
     const productInfo = await getProductById(productExchangeList[index])
     productList.push(productInfo.data())

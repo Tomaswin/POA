@@ -39,7 +39,7 @@ type Mutation{
 	updateProduct(productId: ID!, name: String!, description: String, availability: Boolean!): Boolean
 	createProduct(name: String!, description: String, availability: Boolean!): ID!
 	exchangePoints(token: String!, products: [ID!]): String
-	login(email: String!, password: String!): String
+	login(email: String!, password: String!): Boolean
 	createUser(name: String, lastName: String, email: String!, password: String!, points: Int!): String	
 }
 
