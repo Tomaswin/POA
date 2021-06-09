@@ -116,6 +116,32 @@ const resolvers = {
           console.log(errorMessage)
           return false
         });
+    },
+    async exchangePoints(_, args) {
+      const products = await getProductListByExchange(args.products)
+      let totalPoints = 0;
+      products.forEach(product => {
+        totalPoints += product.totalPoints
+      });
+
+      const user = await getUserById(args.token)
+      if (user.points > totalPoints) {
+        //actualizar points del user
+        user.points = user.points - totalPoints;
+        setUser(user, args.token)
+
+        const data = {
+          date: Date.now(),
+          productList: args.products,
+          totalPoints: totalPoints,
+          user: args.token
+        }
+
+        setNewExchange(data)
+        return "Intercambio de puntos correcto"
+      } else {
+        return "No tenes puntos suficientes, puntos necesarios:" + totalPoints - user.points
+      }
     }
   },
   // ABM Users
@@ -140,6 +166,10 @@ const resolvers = {
     })
   }*/
 };
+
+async function setNewExchange(data) {
+  const res = await admin.firestore().collection("exchange").doc().set(data)
+}
 
 // db requests
 async function getAllData(collection) {
