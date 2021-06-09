@@ -99,23 +99,28 @@ const resolvers = {
       }
     },
     async login(_, args) {
+      let response = {
+        code: 400,
+        msg: ""
+      }
       admin.auth().setPersistence(admin.auth.Auth.Persistence.NONE)
         .then(() => {
-          console.log("entre")
-          if (admin.auth().currentUser == null) {
-            console.log("entre x 2")
+          if (!checkUser()) {
             admin.auth().signInWithEmailAndPassword(args.email, args.password);
-            return false
+            response.code= 200
+            response.msg = "Bienvenido! Iniciaste sesion correctamente."
+
           } else {
-            console.log("entre x 3")
-            return true
+            response.code= 200
+            response.msg = "Ya estas loggeado."
           }
         }).catch((error) => {
-          var errorCode = error.code;
-          var errorMessage = error.message;
-          console.log(errorMessage)
-          return false
+          response.code= error.code
+          response.msg = error.message
         });
+
+        console.log(response)
+        return response
     },
     async exchangePoints(_, args) {
       const products = await getProductListByExchange(args.products)
@@ -169,6 +174,10 @@ const resolvers = {
 
 async function setNewExchange(data) {
   const res = await admin.firestore().collection("exchange").doc().set(data)
+}
+
+function checkUser(){
+  return admin.auth().currentUser;
 }
 
 // db requests

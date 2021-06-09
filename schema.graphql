@@ -29,6 +29,10 @@ type Exchange {
 	totalPoints: Int
 }
 
+type Response {
+	code: Int!
+	msg: String!
+}
 type Query{
 	user(token: String!): User
 	product: [Product]
@@ -41,7 +45,7 @@ type Mutation{
 	updateProduct(productId: ID!, name: String, description: String, availability: Boolean, totalPoints: Int): Boolean
 	createProduct(name: String!, description: String, availability: Boolean!,totalPoints: Int!): ID!
 	exchangePoints(token: String!, products: [ID!]): String
-	login(email: String!, password: String!): Boolean
+	login(email: String!, password: String!): Response!
 	createUser(name: String, lastName: String, email: String!, password: String!, points: Int!): String
 }
 
