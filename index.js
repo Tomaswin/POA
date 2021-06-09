@@ -15,9 +15,13 @@ const resolvers = {
     async user(_, args) {
       try {
         // const user = await getUserById(args.token)
-        const user = await getUserById(args.id)
-        const userExchange = await getExchangeByUser(args.id)
-        return { ...user, "exchangesHistory": userExchange }
+        if (admin.auth().currentUser != null) {
+          const user = await getUserById(args.id)
+          const userExchange = await getExchangeByUser(args.id)
+          return { ...user, "exchangesHistory": userExchange }
+        } else {
+          return null;
+        }
       } catch (error) {
         throw new ApolloError(error)
       }
@@ -120,28 +124,32 @@ const resolvers = {
       return response
     },
     async exchangePoints(_, args) {
-      const products = await getProductListByExchange(args.products)
-      let totalPoints = 0;
-      products.forEach(product => {
-        totalPoints += product.totalPoints
-      });
+      if (admin.auth().currentUser != null) {
+        const products = await getProductListByExchange(args.products)
+        let totalPoints = 0;
+        products.forEach(product => {
+          totalPoints += product.totalPoints
+        });
 
-      const user = await getUserById(args.token)
-      if (user.points > totalPoints) {
-        user.points = user.points - totalPoints;
-        setUser(user, args.token)
+        const user = await getUserById(args.token)
+        if (user.points > totalPoints) {
+          user.points = user.points - totalPoints;
+          setUser(user, args.token)
 
-        const data = {
-          date: Date.now(),
-          productList: args.products,
-          totalPoints: totalPoints,
-          user: args.token
+          const data = {
+            date: Date.now(),
+            productList: args.products,
+            totalPoints: totalPoints,
+            user: args.token
+          }
+
+          setNewExchange(data)
+          return "Intercambio de puntos correcto"
+        } else {
+          return "No tenes puntos suficientes, puntos necesarios:" + totalPoints - user.points
         }
-
-        setNewExchange(data)
-        return "Intercambio de puntos correcto"
       } else {
-        return "No tenes puntos suficientes, puntos necesarios:" + totalPoints - user.points
+        return "No estas logueado"
       }
     },
     // ABM Users

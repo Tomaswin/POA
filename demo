@@ -1,5 +1,5 @@
 Query{
-    user(id:"pfx7zZ42TGNLDQs2ilvpjUfsgC63"){
+    user(token:"pfx7zZ42TGNLDQs2ilvpjUfsgC63"){
         name
         lastName
         email

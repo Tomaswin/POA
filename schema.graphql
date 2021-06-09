@@ -34,7 +34,7 @@ type Response {
 	msg: String!
 }
 type Query{
-	user(id: String!): User
+	user(token: String!): User
 	product: [Product]
 	exchange: [Exchange]
 	exchangeByUser(token: String!): [Exchange]
