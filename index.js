@@ -37,14 +37,13 @@ const resolvers = {
     async exchange(_, args) {
       try {
         const exchange = await getAllData("exchange");
-        return { exchange }
 
-        // const products = [];
-        // exchange.forEach((ex) =>{
-        //   const prod = await getProductListByExchange(exchange.id);
-        //   products.push(prod);
-        // } );
-        // return {...exchange, products};
+        for (let index = 0; index < exchange.length; index++) {
+          const prod = await getProductListByExchange(exchange[index].productList);
+
+          exchange[index].productList = prod;
+        }
+        return exchange;
       } catch (error) {
         throw new ApolloError(error)
       }
@@ -99,28 +98,23 @@ const resolvers = {
       }
     },
     async login(_, args) {
-      console.log('exe login');
       let response = {
         code: 400,
         msg: ""
       }
-      admin.auth().setPersistence(admin.auth.Auth.Persistence.NONE)
-        .then(() => {
-          if (!checkUser()) {
-            console.log('!check');
-            admin.auth().signInWithEmailAndPassword(args.email, args.password);
-            response.code = 200
-            response.msg = "Bienvenido! Iniciaste sesion correctamente."
 
-          } else {
-            console.log('check');
-            response.code = 200
-            response.msg = "Ya estas loggeado."
-          }
+      if (!checkUser()) {
+        await admin.auth().signInWithEmailAndPassword(args.email, args.password).then((info) => {
+          response.code = 200
+          response.msg = "Bienvenido! Iniciaste sesion correctamente."
         }).catch((error) => {
-          response.code = error.code
-          response.msg = error.message
-        });
+          response.msg = "Email o contrase;a incorrecta"
+          response.code = 200
+        })
+      } else {
+        response.code = 200
+        response.msg = "Ya estas loggeado."
+      }
 
       console.log(response)
       return response
@@ -151,7 +145,7 @@ const resolvers = {
       }
     },
     // ABM Users
-  
+
     async createUser(parent, args) {
       const data = {
         email: args.email,
@@ -161,10 +155,7 @@ const resolvers = {
         points: args.points
       }
       console.log(data)
-      admin.auth().createUser({
-        email: data.email,
-        password: data.password,
-      }).then((userCredential) => {
+      admin.auth().createUserWithEmailAndPassword(data.email, data.password).then((userCredential) => {
         setUser(data, userCredential.uid)
         return res.id //Validar si esto es lo que queremos devolver
       }).catch((error) => {
@@ -188,9 +179,10 @@ async function getAllData(collection) {
   const listData = []
   const res = await admin.firestore().collection(collection).get()
   res.docs.forEach(item => {
-    listData.push(item.data())
+    const id = collection + "Id"
+    listData.push({ [id]: item.id, ...item.data() })
   });
-
+  console.log(listData)
   return listData
   // return productList
 }

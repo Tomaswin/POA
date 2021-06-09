@@ -56,7 +56,7 @@ Query{
 
 Mutation{
     
-    login(email: "nats@gmail.com", password: "0987"){
+    login(email: "natsbl@gmail.com", password: "0987"){
      	code
     	msg
   	}
