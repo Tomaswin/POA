@@ -107,20 +107,20 @@ const resolvers = {
         .then(() => {
           if (!checkUser()) {
             admin.auth().signInWithEmailAndPassword(args.email, args.password);
-            response.code= 200
+            response.code = 200
             response.msg = "Bienvenido! Iniciaste sesion correctamente."
 
           } else {
-            response.code= 200
+            response.code = 200
             response.msg = "Ya estas loggeado."
           }
         }).catch((error) => {
-          response.code= error.code
+          response.code = error.code
           response.msg = error.message
         });
 
-        console.log(response)
-        return response
+      console.log(response)
+      return response
     },
     async exchangePoints(_, args) {
       const products = await getProductListByExchange(args.products)
@@ -131,7 +131,6 @@ const resolvers = {
 
       const user = await getUserById(args.token)
       if (user.points > totalPoints) {
-        //actualizar points del user
         user.points = user.points - totalPoints;
         setUser(user, args.token)
 
@@ -176,7 +175,7 @@ async function setNewExchange(data) {
   const res = await admin.firestore().collection("exchange").doc().set(data)
 }
 
-function checkUser(){
+function checkUser() {
   return admin.auth().currentUser;
 }
 
@@ -193,17 +192,21 @@ async function getAllData(collection) {
 }
 
 async function getProductListByExchange(productExchangeList) {
-  const productList = []
+  let productList = []
   console.log('productExchangeList', productExchangeList)
   for (let index = 0; index < productExchangeList.length; index++) {
-    const productInfo = await getProductById(productExchangeList[index])
-    productList.push(productInfo.data())
+    let productInfo = await getProductById(productExchangeList[index])
+    let data = productInfo.data();
+    console.log(data)
+    productList.push({ "productId": productInfo.id, "name": data.name, "description": data.description, "availability": data.availability, "totalPoints": data.totalPoints })
   }
   return productList
 }
 
 async function getProductById(productId) {
   const productInfo = await admin.firestore().collection("product").doc(productId).get()
+  console.log(productInfo.data())
+  console.log(productId)
   return productInfo
 }
 
@@ -213,13 +216,13 @@ async function getUserById(userId) {
 }
 
 async function getExchangeByUser(userId) {
-  const exchangeList = []
+  let exchangeList = []
   const res = await admin.firestore().collection("exchange").where("user", "==", userId).get()
   for (let index = 0; index < res.docs.length; index++) {
-    const exchangeData = res.docs[index].data()
+    let exchangeData = res.docs[index].data()
 
-    const productList = await getProductListByExchange(exchangeData.productList)
-    exchangeList.push({ "name": exchangeData.name, "totalPoints": exchangeData.totalPoints, "productList": productList, "date": exchangeData.date })
+    let productList = await getProductListByExchange(exchangeData.productList)
+    exchangeList.push({ "exchangeId": res.docs[index].id, "totalPoints": exchangeData.totalPoints, "productList": productList, "date": exchangeData.date })
   }
   return exchangeList
 }
