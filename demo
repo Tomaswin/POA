@@ -1,0 +1,73 @@
+Query{
+    user(id:"pfx7zZ42TGNLDQs2ilvpjUfsgC63"){
+        name
+        lastName
+        email
+        password
+        points
+        exchangesHistory{
+            exchangeId
+            productList{
+                productId
+                name
+                description
+                availability
+                totalPoints
+            }
+            date
+            totalPoints
+        }
+    }
+
+	product{
+        productId
+        name
+        description
+        availability
+        totalPoints
+    }
+
+	exchange{
+        exchangeId
+        productList{
+            productId
+            name
+            description
+            availability
+            totalPoints
+        }
+        date
+        totalPoints
+    }
+
+	exchangeByUser(token: "pfx7zZ42TGNLDQs2ilvpjUfsgC63"){
+        exchangeId
+        productList{
+            productId
+            name
+            description
+            availability
+            totalPoints
+        }
+        date
+        totalPoints
+    }
+}
+
+Mutation{
+    
+    login(email: "nats@gmail.com", password: "0987"){
+     	code
+    	msg
+  	}
+	
+    createProduct(name: "Zapatilla Nike", description: "Todos los talles", availability: "true", totalPoints: "1000")
+
+	updateProduct(productId: "", name: "", description: "", availability: "", totalPoints: "")
+	
+    deleteProduct(productId: "")
+	
+    exchangePoints(token: "", products: ["","",""])
+		
+    createUser(name: "Nat", lastName: "Bell", email: "nats@gmail.com", password: "0987", points: 0)
+}

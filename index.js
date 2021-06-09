@@ -1,5 +1,5 @@
 const { readFileSync } = require('fs')
-const { ApolloServer, ApolloError, addErrorLoggingToSchema } = require('apollo-server');
+const { ApolloServer, ApolloError } = require('apollo-server');
 const admin = require('firebase/app')
 require("firebase/auth");
 require("firebase/firestore");
@@ -99,6 +99,7 @@ const resolvers = {
       }
     },
     async login(_, args) {
+      console.log('exe login');
       let response = {
         code: 400,
         msg: ""
@@ -106,11 +107,13 @@ const resolvers = {
       admin.auth().setPersistence(admin.auth.Auth.Persistence.NONE)
         .then(() => {
           if (!checkUser()) {
+            console.log('!check');
             admin.auth().signInWithEmailAndPassword(args.email, args.password);
             response.code = 200
             response.msg = "Bienvenido! Iniciaste sesion correctamente."
 
           } else {
+            console.log('check');
             response.code = 200
             response.msg = "Ya estas loggeado."
           }
@@ -146,29 +149,29 @@ const resolvers = {
       } else {
         return "No tenes puntos suficientes, puntos necesarios:" + totalPoints - user.points
       }
+    },
+    // ABM Users
+  
+    async createUser(parent, args) {
+      const data = {
+        email: args.email,
+        password: args.password,
+        name: args.name,
+        lastName: args.lastName,
+        points: args.points
+      }
+      console.log(data)
+      admin.auth().createUser({
+        email: data.email,
+        password: data.password,
+      }).then((userCredential) => {
+        setUser(data, userCredential.uid)
+        return res.id //Validar si esto es lo que queremos devolver
+      }).catch((error) => {
+        throw new ApolloError(error)
+      })
     }
   },
-  // ABM Users
-  /*
-  async createUser(parent, args) {
-    const data = {
-      email: args.email,
-      password: args.password,
-      name: args.name,
-      lastName: args.lastName,
-      points: args.points
-    }
-    console.log(data)
-    admin.auth().createUser({
-      email: data.email,
-      password: data.password,
-    }).then((userCredential) => {
-      setUser(data, userCredential.uid)
-      return res.id //Validar si esto es lo que queremos devolver
-    }).catch((error) => {
-      throw new ApolloError(error)
-    })
-  }*/
 };
 
 async function setNewExchange(data) {
@@ -176,6 +179,7 @@ async function setNewExchange(data) {
 }
 
 function checkUser() {
+  console.log('entro al checkkkkk');
   return admin.auth().currentUser;
 }
 
@@ -239,28 +243,3 @@ const server = new ApolloServer({ typeDefs, resolvers });
 server.listen().then(({ url }) => {
   console.log(`🚀  Server ready at ${url}`);
 });
-
-
-// TYPE DATE = SCALAR 
-/*
-// resolver for DATE
-// https://stackoverflow.com/questions/49693928/date-and-json-in-type-definition-for-graphql
-const resolverMap = {
-    Date: new GraphQLScalarType({
-      name: 'Date',
-      description: 'Date custom scalar type',
-      parseValue(value) {
-        return new Date(value); // value from the client
-      },
-      serialize(value) {
-        return value.getTime(); // value sent to the client
-      },
-      parseLiteral(ast) {
-        if (ast.kind === Kind.INT) {
-          return parseInt(ast.value, 10); // ast value is always in string format
-        }
-        return null;
-      },
-    })
-}
-*/
